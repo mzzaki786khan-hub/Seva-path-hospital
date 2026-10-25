@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEVA PATH Smart Hospital</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8',
+                        emergency: '#dc2626',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .min-touch { min-height: 56px; min-width: 56px; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        .animate-pulse-glow {
+            animation: pulseGlow 1.5s infinite;
+        }
+
+        body, main, header, footer, div, button, input {
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+        body{
+             background-image: url("Hospital.jpeg");
+                background-size: cover;
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-sans antialiased flex flex-col" id="body-root">
+
+    <!-- App Container -->
+    <div id="app" class="min-h-full flex flex-col flex-1">
+        <!-- Header -->
+        <header class="bg-primary text-white shadow-md sticky top-0 z-50">
+            <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+                <!-- Left: Back & Title -->
+                <div class="flex items-center space-x-2">
+                    <button id="nav-back-btn" onclick="router.back()" class="p-2 bg-blue-700 hover:bg-blue-800 rounded-lg min-touch flex items-center justify-center transition" aria-label="Go Back">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        <span class="sr-only">Back</span>
+                    </button>
+                    
+                    <div class="flex items-center space-x-2 cursor-pointer hover:opacity-90 transition" onclick="router.navigate('home')">
+                        <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        <div>
+                            <h1 class="font-bold text-lg leading-tight" id="header-title">SEVA PATH</h1>
+                            <p class="text-xs text-blue-200" id="header-subtitle">City District Hospital</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Refresh, Emergency & Settings -->
+                <div class="flex items-center space-x-2">
+                    <button onclick="window.location.reload()" class="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg min-touch flex items-center justify-center transition" title="Refresh Page">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        <span class="sr-only">Refresh</span>
+                    </button>
+                    <button onclick="router.navigate('emergency')" class="bg-emergency hover:bg-red-700 text-white px-3 py-2 rounded-lg font-bold text-sm flex items-center space-x-1 shadow min-touch transition transform active:scale-95">
+                        <svg class="w-5 h-5 animate-pulse-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <span id="nav-emergency-btn">Emergency</span>
+                    </button>
+                    <button onclick="router.navigate('settings')" class="p-2 bg-blue-600 hover:bg-blue-700 rounded-lg min-touch flex items-center justify-center transition" aria-label="Settings">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 11-6 0 3 3 0 016 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 pb-24" id="main-view">
+            <!-- Dynamic view injected here -->
+        </main>
+
+        <!-- Footer / Navigation Bar -->
+        <footer class="bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 fixed bottom-0 left-0 right-0 z-40 shadow-lg">
+            <div class="max-w-7xl mx-auto flex justify-around p-2">
+                <button onclick="router.navigate('home')" class="flex flex-col items-center text-xs text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 p-1 transition">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                    <span id="tab-home">Home</span>
+                </button>
+                <button onclick="router.navigate('find')" class="flex flex-col items-center text-xs text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 p-1 transition">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                    <span id="tab-nav">Rooms</span>
+                </button>
+                <button onclick="router.navigate('diagnostics')" class="flex flex-col items-center text-xs text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 p-1 transition">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                    <span id="tab-diag">X-Ray & Tests</span>
+                </button>
+                <button onclick="router.navigate('staff')" class="flex flex-col items-center text-xs text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 p-1 transition">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                    <span id="tab-staff">Staff</span>
+                </button>
+                <button onclick="router.navigate('admin')" class="flex flex-col items-center text-xs text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-blue-400 p-1 transition">
+                    <svg class="w-6 h-6 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                    <span id="tab-admin">Admin</span>
+                </button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- JavaScript Application Logic -->
+    <script>
+        // --- Multilingual Translations ---
+        const i18n = {
+            en: {
+                appName: "SEVA PATH",
+                hospitalName: "City District Hospital",
+                emergency: "Emergency",
+                home: "Home",
+                navigation: "Rooms",
+                diagnostics: "X-Ray & Tests",
+                staff: "Staff",
+                board: "Board",
+                admin: "Admin",
+                welcome: "Welcome to SEVA PATH",
+                subtitle: "Smart Hospital Queue Management & Accessible Navigation",
+                registerBtn: "Register / Get OPD Slip",
+                hasSlipBtn: "I Have My Slip",
+                findRoomBtn: "Find OPD Room / Ward",
+                findDiagBtn: "X-Ray, MRI, CT Scan & Lab Tests",
+                emergencyBtn: "Emergency & Urgent Help",
+                step: "Step",
+                next: "Next",
+                back: "Back",
+                submit: "Submit",
+                name: "Full Name",
+                age: "Age",
+                gender: "Gender",
+                mobile: "Mobile Number (Optional)",
+                selectDept: "Select OPD Doctor or Diagnostic Test",
+                assistedMode: "Assisted Mode (Audio & Large Text)",
+                token: "Token",
+                room: "Room / Department",
+                floor: "Floor",
+                doctor: "Doctor / Technologist",
+                waitEstimate: "Estimated Wait",
+                peopleAhead: "people ahead",
+                shareSlip: "Share Slip",
+                newSlipBtn: "Make New Slip",
+                resetSlipBtn: "Reset Slip",
+                openMapBtn: "Open Full Navigation Map",
+                readAloud: "Read Aloud",
+                avoidStairs: "Avoid Stairs (Lifts)",
+                searchPlaceHolder: "Search X-Ray, MRI, CT Scan, Blood Test, Ward...",
+                directionsTitle: "Step-by-Step Directions:",
+                navDirectionsText: "1. Start at Main Entrance.\n2. Walk 15m to Registration / Diagnostic Desk.\n3. Turn right for Radiology (X-Ray, MRI, CT-Scan) or Laboratory.",
+                imLost: "I'm Lost (Help Desk)",
+                copiedText: "OPD Slip details copied to clipboard!"
+            },
+            hi: {
+                appName: "सेवा पथ",
+                hospitalName: "सिटी डिस्ट्रिक्ट हॉस्पिटल",
+                emergency: "आपातकाल",
+                home: "होम",
+                navigation: "कमरे",
+                diagnostics: "एक्स-रे और टेस्ट",
+                staff: "कर्मचारी",
+                board: "बोर्ड",
+                admin: "एडमिन",
+                welcome: "सेवा पथ में आपका स्वागत है",
+                subtitle: "स्मार्ट अस्पताल कतार प्रबंधन और सुलभ नेविगेशन",
+                registerBtn: "पंजीकरण / पर्ची प्राप्त करें",
+                hasSlipBtn: "मेरे पास पर्ची है",
+                findRoomBtn: "ओपीडी कमरा / वार्ड खोजें",
+                findDiagBtn: "एक्स-रे, एमआरआई, सीटी स्कैन और लैब टेस्ट",
+                emergencyBtn: "आपातकालीन और तुरंत सहायता",
+                step: "चरण",
+                next: "अगला",
+                back: "पीछे",
+                submit: "जमा करें",
+                name: "पूरा नाम",
+                age: "आयु",
+                gender: "लिंग",
+                mobile: "मोबाइल नंबर (वैकल्पिक)",
+                selectDept: "ओपीडी डॉक्टर या जांच सेवा चुनें",
+                assistedMode: "सहायता मोड (ऑडियो और बड़ा पाठ)",
+                token: "टोकन",
+                room: "कमरा / विभाग",
+                floor: "मंजिल",
+                doctor: "डॉक्टर / तकनीशियन",
+                waitEstimate: "अनुमानित प्रतीक्षा",
+                peopleAhead: "लोग आगे हैं",
+                shareSlip: "पर्ची शेयर करें",
+                newSlipBtn: "नई पर्ची बनाएं",
+                resetSlipBtn: "पर्ची रीसेट करें",
+                openMapBtn: "पूर्ण नेविगेशन मैप खोलें",
+                readAloud: "बोलकर सुनाएं",
+                avoidStairs: "सीढ़ियां टालें (लिफ्ट)",
+                searchPlaceHolder: "एक्स-रे, एमआरआई, सीटी स्कैन, ब्लड टेस्ट खोजें...",
+                directionsTitle: "चरण-दर-चरण दिशा-निर्देश:",
+                navDirectionsText: "1. मुख्य द्वार से शुरू करें।\n2. पंजीकरण / जांच डेस्क तक 15 मीटर चलें।\n3. रेडियोलॉजी (एक्स-रे, एमआरआई, सीटी स्कैन) या लैब के लिए दाएं मुड़ें।",
+                imLost: "मैं खो गया हूँ (हेल्प डेस्क)",
+                copiedText: "ओपीडी पर्ची विवरण क्लिपबोर्ड पर कॉपी हो गया!"
+            },
+            ta: {
+                appName: "சேவா பாதை",
+                hospitalName: "நகர மாவட்ட மருத்துவமனை",
+                emergency: "அவசர சிகிச்சை",
+                home: "முகப்பு",
+                navigation: "அறைகள்",
+                diagnostics: "எக்ஸ்-ரே & பரிசோதனை",
+                staff: "பணியாளர்கள்",
+                board: "பலகை",
+                admin: "நிர்வாகி",
+                welcome: "சேவா பாதைக்கு நல்வரவு",
+                subtitle: "ஸ்மார்ட் மருத்துவமனை வரிசை மேலாண்மை மற்றும் வழிகாட்டுதல்",
+                registerBtn: "பதிவு செய்க / சீட்டு பெறுக",
+                hasSlipBtn: "என்னிடம் சீட்டு உள்ளது",
+                findRoomBtn: "OPD அறை / வார்டைக் கண்டுபிடிக்கவும்",
+                findDiagBtn: "எக்ஸ்-ரே, எம்.ஆர்.ஐ, சி.டி ஸ்கேன் & ஆய்வகம்",
+                emergencyBtn: "அவசர மற்றும் உடனடி உதவி",
+                step: "படி",
+                next: "அடுத்து",
+                back: "பின்னால்",
+                submit: "சமர்ப்பிக்கவும்",
+                name: "முழு பெயர்",
+                age: "வயது",
+                gender: "பாலினம்",
+                mobile: "மொபைல் எண்",
+                selectDept: "மருத்துவர் அல்லது பரிசோதனையைத் தேர்ந்தெடுக்கவும்",
+                assistedMode: "உதவி முறை (ஆடியோ மற்றும் பெரிய எழுத்து)",
+                token: "டோக்கன்",
+                room: "அறை / பிரிவு",
+                floor: "தளம்",
+                doctor: "மருத்துவர் / தொழில்நுட்ப வல்லுநர்",
+                waitEstimate: "காத்திருப்பு காலம்",
+                peopleAhead: "நபர்கள் முன்னால்",
+                shareSlip: "சீட்டைப் பகிரவும்",
+                newSlipBtn: "புதிய சீட்டு உருவாக்கு",
+                resetSlipBtn: "சீட்டை மீட்டமை",
+                openMapBtn: "முழு வழிகாட்டி வரைபடத்தைத் திற",
+                readAloud: "வாசிக்கவும்",
+                avoidStairs: "படிகளை தவிர்க்கவும்",
+                searchPlaceHolder: "எக்ஸ்-ரே, எம்.ஆர்.ஐ, சி.டி ஸ்கேன், ரத்த பரிசோதனை தேடு...",
+                directionsTitle: "படிப்படியான வழிகாட்டுதல்:",
+                navDirectionsText: "1. முதன்மை நுழைவாயிலில் தொடங்கவும்.\n2. உதவி மையத்திற்கு 15 மீட்டர் செல்லவும்.\n3. எக்ஸ்-ரே, எம்.ஆர்.ஐ, சி.டி ஸ்கேன் அல்லது ஆய்வகத்திற்கு வலதுபுறம் திரும்பவும்.",
+                imLost: "நான் வழிமாறிவிட்டேன்",
+                copiedText: "சீட்டு தகவல்கள் நகலெடுக்கப்பட்டன!"
+            }
+        };
+
+        // --- State Management ---
+        const DEFAULT_STATE = {
+            lang: 'en',
+            theme: 'light',
+            highContrast: false,
+            assistedMode: false,
+            currentView: 'home',
+            historyStack: ['home'],
+            registration: { name: '', age: '', gender: '', mobile: '', dept: '' },
+            currentSlip: null,
+            urgentFlags: [],
+            queues: {
+                'General Medicine': { current: 'MED-040', waiting: 4, avgTime: 5, status: 'available' },
+                'Children': { current: 'CHI-012', waiting: 2, avgTime: 6, status: 'available' },
+                'Women and Pregnancy': { current: 'WOM-008', waiting: 5, avgTime: 7, status: 'available' },
+                'Bones and Joints': { current: 'BON-015', waiting: 3, avgTime: 8, status: 'available' },
+                'Ear, Nose and Throat': { current: 'ENT-004', waiting: 1, avgTime: 5, status: 'available' },
+                'Eyes': { current: 'EYE-009', waiting: 2, avgTime: 5, status: 'available' },
+                'Skin': { current: 'SKI-003', waiting: 2, avgTime: 5, status: 'available' },
+                'X-Ray': { current: 'XRAY-019', waiting: 3, avgTime: 10, status: 'available' },
+                'MRI Scan': { current: 'MRI-005', waiting: 2, avgTime: 20, status: 'available' },
+                'CT Scan': { current: 'CT-011', waiting: 4, avgTime: 15, status: 'available' },
+                'Blood Test (Lab)': { current: 'LAB-055', waiting: 6, avgTime: 4, status: 'available' }
+            },
+            departments: [
+                { id: 'General Medicine', name: 'General Medicine (Fever, BP, Sugar)', room: 'Room 1 & 2', floor: 'First Floor', doctor: 'Dr. A. Sharma' },
+                { id: 'Children', name: 'Children (Pediatrics)', room: 'Room 3', floor: 'First Floor', doctor: 'Dr. R. Gupta' },
+                { id: 'Women and Pregnancy', name: 'Women & Pregnancy (Gynecology)', room: 'Room 4', floor: 'First Floor', doctor: 'Dr. P. Verma' },
+                { id: 'Bones and Joints', name: 'Bones and Joints (Orthopedics)', room: 'Room 5', floor: 'First Floor', doctor: 'Dr. S. Mehta' },
+                { id: 'Ear, Nose and Throat', name: 'Ear, Nose and Throat (ENT)', room: 'Room 6', floor: 'First Floor', doctor: 'Dr. K. Rao' },
+                { id: 'Eyes', name: 'Eyes (Ophthalmology)', room: 'Room 7', floor: 'First Floor', doctor: 'Dr. M. Sen' },
+                { id: 'Skin', name: 'Skin (Dermatology)', room: 'Room 8', floor: 'First Floor', doctor: 'Dr. N. Das' },
+                { id: 'X-Ray', name: 'X-Ray Diagnostics', room: 'Radiology Rm 101', floor: 'Ground Floor', doctor: 'Tech. V. Kumar' },
+                { id: 'MRI Scan', name: 'MRI Scan Department', room: 'Radiology Rm 102', floor: 'Ground Floor', doctor: 'Dr. H. Singh' },
+                { id: 'CT Scan', name: 'CT Scan Facility', room: 'Radiology Rm 103', floor: 'Ground Floor', doctor: 'Dr. S. Nair' },
+                { id: 'Blood Test (Lab)', name: 'Laboratory (Blood Test)', room: 'Central Lab', floor: 'Ground Floor', doctor: 'Tech. M. Patel' }
+            ]
+        };
+
+        let state = JSON.parse(localStorage.getItem('sevapath_state')) || DEFAULT_STATE;
+
+        function saveState() {
+            localStorage.setItem('sevapath_state', JSON.stringify(state));
+            window.dispatchEvent(new Event('storage-sync'));
+        }
+
+        const channel = new BroadcastChannel('sevapath_channel');
+        channel.onmessage = (event) => {
+            state = event.data;
+            localStorage.setItem('sevapath_state', JSON.stringify(state));
+            router.render();
+        };
+
+        window.addEventListener('storage-sync', () => {
+            channel.postMessage(state);
+        });
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = state.lang === 'hi' ? 'hi-IN' : state.lang === 'ta' ? 'ta-IN' : 'en-US';
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // --- Router Navigation ---
+        const router = {
+            navigate(view, params = {}) {
+                if (state.currentView !== view) {
+                    if (!state.historyStack) state.historyStack = ['home'];
+                    state.historyStack.push(view);
+                }
+                state.currentView = view;
+                state.viewParams = params;
+                saveState();
+                this.render();
+                window.scrollTo(0, 0);
+            },
+            back() {
+                if (state.historyStack && state.historyStack.length > 1) {
+                    state.historyStack.pop();
+                    state.currentView = state.historyStack[state.historyStack.length - 1];
+                } else {
+                    state.currentView = 'home';
+                    state.historyStack = ['home'];
+                }
+                saveState();
+                this.render();
+                window.scrollTo(0, 0);
+            },
+            render() {
+                const t = i18n[state.lang] || i18n.en;
+                document.getElementById('header-title').innerText = t.appName;
+                document.getElementById('header-subtitle').innerText = t.hospitalName;
+                document.getElementById('nav-emergency-btn').innerText = t.emergency;
+                document.getElementById('tab-home').innerText = t.home;
+                document.getElementById('tab-nav').innerText = t.navigation;
+                document.getElementById('tab-diag').innerText = t.diagnostics;
+                document.getElementById('tab-staff').innerText = t.staff;
+                document.getElementById('tab-admin').innerText = t.admin;
+
+                const backBtn = document.getElementById('nav-back-btn');
+                if (state.currentView === 'home') {
+                    backBtn.classList.add('hidden');
+                } else {
+                    backBtn.classList.remove('hidden');
+                }
+
+                const htmlEl = document.documentElement;
+                const root = document.getElementById('body-root');
+
+                if (state.theme === 'dark' || state.highContrast) {
+                    htmlEl.classList.add('dark');
+                } else {
+                    htmlEl.classList.remove('dark');
+                }
+
+                root.className = `h-full font-sans antialiased flex flex-col transition-colors duration-200 ${
+                    state.highContrast 
+                        ? 'bg-black text-yellow-300' 
+                        : state.theme === 'dark' 
+                            ? 'bg-slate-900 text-slate-100' 
+                            : 'bg-slate-50 text-slate-900'
+                }`;
+
+                let contentHTML = '';
+                switch (state.currentView) {
+                    case 'home': contentHTML = renderHome(); break;
+                    case 'register': contentHTML = renderRegister(); break;
+                    case 'slip': contentHTML = renderSlip(); break;
+                    case 'myturn': contentHTML = renderMyTurn(); break;
+                    case 'findSlip': contentHTML = renderFindSlip(); break;
+                    case 'find': contentHTML = renderFindPlace(); break;
+                    case 'diagnostics': contentHTML = renderDiagnosticsView(); break;
+                    case 'emergency': contentHTML = renderEmergency(); break;
+                    case 'settings': contentHTML = renderSettings(); break;
+                    case 'staff': contentHTML = renderStaffDashboard(); break;
+                    case 'board': contentHTML = renderBoard(); break;
+                    case 'admin': contentHTML = renderAdminPortal(); break;
+                    default: contentHTML = renderHome();
+                }
+
+                const main = document.getElementById('main-view');
+                main.innerHTML = `<div class="animate-fade-in">${contentHTML}</div>`;
+            }
+        };
+
+        // --- Screen Views ---
+
+        function renderHome() {
+            const t = i18n[state.lang] || i18n.en;
+            return `
+                <div class="max-w-md mx-auto space-y-4 mt-2">
+                    <div class="bg-blue-50 dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-blue-100 dark:border-slate-700 text-center">
+                        <h2 class="text-2xl font-bold text-primary dark:text-blue-400 mb-1">${t.welcome}</h2>
+                        <p class="text-slate-600 dark:text-slate-300 text-xs mb-3">${t.subtitle}</p>
+                        
+                        <!-- Language Switcher -->
+                        <div class="flex justify-center space-x-2">
+                            <button onclick="setLang('en')" class="px-3 py-1 rounded-lg font-bold text-xs transition ${state.lang==='en'?'bg-primary text-white shadow':'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border dark:border-slate-600'}">English</button>
+                            <button onclick="setLang('hi')" class="px-3 py-1 rounded-lg font-bold text-xs transition ${state.lang==='hi'?'bg-primary text-white shadow':'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border dark:border-slate-600'}">हिंदी</button>
+                            <button onclick="setLang('ta')" class="px-3 py-1 rounded-lg font-bold text-xs transition ${state.lang==='ta'?'bg-primary text-white shadow':'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border dark:border-slate-600'}">தமிழ்</button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-3">
+                        <button onclick="router.navigate('register')" class="min-touch bg-primary hover:bg-blue-700 text-white p-4 rounded-2xl shadow-md flex items-center space-x-4 text-left transition transform active:scale-95">
+                            <svg class="w-8 h-8 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg>
+                            <div>
+                                <div class="font-bold text-base leading-snug">${t.registerBtn}</div>
+                                <div class="text-xs text-blue-100">Get token & OPD slip in simple steps</div>
+                            </div>
+                        </button>
+
+                        <button onclick="router.navigate('findSlip')" class="min-touch bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-sm flex items-center space-x-4 text-left hover:border-primary transition transform active:scale-95">
+                            <svg class="w-8 h-8 text-primary dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path></svg>
+                            <div>
+                                <div class="font-bold text-base text-slate-800 dark:text-white leading-snug">${t.hasSlipBtn}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">Track queue status & room number</div>
+                            </div>
+                        </button>
+
+                        <!-- Separate Room Navigation Button -->
+                        <button onclick="router.navigate('find')" class="min-touch bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-sm flex items-center space-x-4 text-left hover:border-primary transition transform active:scale-95">
+                            <svg class="w-8 h-8 text-primary dark:text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                            <div>
+                                <div class="font-bold text-base text-slate-800 dark:text-white leading-snug">${t.findRoomBtn}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">Locate doctor consulting rooms & wards</div>
+                            </div>
+                        </button>
+
+                        <!-- Separate X-Ray & Diagnostics Navigation Button -->
+                        <button onclick="router.navigate('diagnostics')" class="min-touch bg-white dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 p-4 rounded-2xl shadow-sm flex items-center space-x-4 text-left hover:border-primary transition transform active:scale-95">
+                            <svg class="w-8 h-8 text-sky-600 dark:text-sky-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path></svg>
+                            <div>
+                                <div class="font-bold text-base text-slate-800 dark:text-white leading-snug">${t.findDiagBtn}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">X-Ray, MRI, CT Scan, and Blood Test Lab routes</div>
+                            </div>
+                        </button>
+
+                        <button onclick="router.navigate('emergency')" class="min-touch bg-red-600 hover:bg-red-700 text-white p-4 rounded-2xl shadow-md flex items-center space-x-4 text-left transition transform active:scale-95">
+                            <svg class="w-8 h-8 flex-shrink-0 animate-pulse-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <div>
+                                <div class="font-bold text-base leading-snug">${t.emergencyBtn}</div>
+                                <div class="text-xs text-red-100">Immediate priority care & ambulance contacts</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setLang(l) {
+            state.lang = l;
+            saveState();
+            router.render();
+        }
+
+        // --- Registration Flow ---
+        let regStep = 1;
+        function renderRegister() {
+            const t = i18n[state.lang] || i18n.en;
+            const totalSteps = 5;
+            
+            let stepContent = '';
+            if (regStep === 1) {
+                stepContent = `
+                    <label class="block font-bold text-lg mb-2 dark:text-white">${t.name}</label>
+                    <input type="text" id="reg-name" value="${state.registration.name}" class="w-full p-4 border-2 rounded-xl text-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white focus:border-primary outline-none" placeholder="e.g. Kamla Devi" />
+                `;
+            } else if (regStep === 2) {
+                stepContent = `
+                    <label class="block font-bold text-lg mb-2 dark:text-white">${t.age}</label>
+                    <input type="number" id="reg-age" value="${state.registration.age}" class="w-full p-4 border-2 rounded-xl text-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white focus:border-primary outline-none" placeholder="e.g. 62" />
+                `;
+            } else if (regStep === 3) {
+                stepContent = `
+                    <label class="block font-bold text-lg mb-2 dark:text-white">${t.gender}</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <button onclick="setRegGender('Female')" class="p-4 border-2 rounded-xl font-bold transition ${state.registration.gender==='Female'?'bg-primary text-white border-primary':'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-white'}">Female</button>
+                        <button onclick="setRegGender('Male')" class="p-4 border-2 rounded-xl font-bold transition ${state.registration.gender==='Male'?'bg-primary text-white border-primary':'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-white'}">Male</button>
+                        <button onclick="setRegGender('Other')" class="p-4 border-2 rounded-xl font-bold transition ${state.registration.gender==='Other'?'bg-primary text-white border-primary':'bg-white dark:bg-slate-900 dark:border-slate-700 dark:text-white'}">Other</button>
+                    </div>
+                `;
+            } else if (regStep === 4) {
+                stepContent = `
+                    <label class="block font-bold text-lg mb-2 dark:text-white">${t.mobile}</label>
+                    <input type="tel" id="reg-mobile" value="${state.registration.mobile}" class="w-full p-4 border-2 rounded-xl text-lg dark:bg-slate-900 dark:border-slate-700 dark:text-white focus:border-primary outline-none" placeholder="10-digit mobile number" />
+                `;
+            } else if (regStep === 5) {
+                stepContent = `
+                    <label class="block font-bold text-lg mb-2 dark:text-white">${t.selectDept}</label>
+                    <div class="grid grid-cols-1 gap-3 max-h-80 overflow-y-auto">
+                        ${state.departments.map(d => `
+                            <div onclick="setRegDept('${d.id}')" class="p-4 border-2 rounded-xl cursor-pointer transition ${state.registration.dept === d.id ? 'border-primary bg-blue-50 dark:bg-slate-900' : 'border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800'}">
+                                <div class="font-bold text-primary dark:text-blue-400">${d.name}</div>
+                                <div class="text-xs text-slate-500 dark:text-slate-400">${d.room} (${d.floor}) - ${d.doctor}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="max-w-md mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-sm font-bold text-primary dark:text-blue-400">${t.step} ${regStep} of ${totalSteps}</span>
+                        <label class="flex items-center space-x-2 text-xs font-semibold cursor-pointer">
+                            <input type="checkbox" ${state.assistedMode ? 'checked' : ''} onchange="toggleAssistedMode()" class="w-4 h-4 text-primary rounded"/>
+                            <span class="dark:text-slate-300">${t.assistedMode}</span>
+                        </label>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-700 h-2 rounded-full mb-6">
+                        <div class="bg-primary h-2 rounded-full transition-all duration-300" style="width: ${(regStep/totalSteps)*100}%"></div>
+                    </div>
+
+                    <div class="mb-6">
+                        ${stepContent}
+                    </div>
+
+                    <div class="flex justify-between">
+                        ${regStep > 1 ? `<button onclick="regStep--; router.render();" class="px-6 py-3 bg-slate-200 dark:bg-slate-700 dark:text-white rounded-xl font-bold min-touch transition">${t.back}</button>` : '<div></div>'}
+                        ${regStep < totalSteps ? 
+                            `<button onclick="saveRegInput(); regStep++; router.render();" class="px-6 py-3 bg-primary hover:bg-blue-700 text-white rounded-xl font-bold min-touch transition">${t.next}</button>` :
+                            `<button onclick="completeRegistration()" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold min-touch transition">${t.submit}</button>`
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        function setRegGender(g) { state.registration.gender = g; saveState(); router.render(); }
+        function setRegDept(d) { state.registration.dept = d; saveState(); router.render(); }
+        function toggleAssistedMode() { state.assistedMode = !state.assistedMode; saveState(); router.render(); }
+
+        function saveRegInput() {
+            if (regStep === 1) {
+                const el = document.getElementById('reg-name');
+                if (el) state.registration.name = el.value;
+            } else if (regStep === 2) {
+                const el = document.getElementById('reg-age');
+                if (el) state.registration.age = el.value;
+            } else if (regStep === 4) {
+                const el = document.getElementById('reg-mobile');
+                if (el) state.registration.mobile = el.value;
+            }
+            saveState();
+        }
+
+        function completeRegistration() {
+            saveRegInput();
+            const dept = state.registration.dept || 'General Medicine';
+            const code = dept.substring(0, 3).toUpperCase().replace(/\s+/g, '') + '-' + Math.floor(100 + Math.random() * 900);
+            const deptObj = state.departments.find(d => d.id === dept) || state.departments[0];
+            
+            state.currentSlip = {
+                token: code,
+                name: state.registration.name || 'Patient',
+                department: dept,
+                room: deptObj.room,
+                floor: deptObj.floor,
+                doctor: deptObj.doctor,
+                timestamp: new Date().toLocaleTimeString()
+            };
+
+            if (state.queues[dept]) {
+                state.queues[dept].waiting++;
+            }
+            saveState();
+            router.navigate('slip');
+        }
+
+        // --- OPD Slip View ---
+        function renderSlip() {
+            const t = i18n[state.lang] || i18n.en;
+            const slip = state.currentSlip || { token: 'MED-042', name: 'Kamla Devi', department: 'General Medicine', room: 'Room 1 & 2', floor: 'First Floor', doctor: 'Dr. A. Sharma' };
+            const q = state.queues[slip.department] || { waiting: 4, avgTime: 5 };
+            const estWait = q.waiting * q.avgTime;
+
+            if (state.assistedMode) {
+                speakText(`Your token is ${slip.token}. Please go to ${slip.room} on the ${slip.floor}. Doctor or test is ${slip.doctor}.`);
+            }
+
+            return `
+                <div class="max-w-md mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-xl border-2 border-primary mt-2 space-y-4">
+                    <!-- Top Action: Make New Slip & Reset -->
+                    <div class="flex justify-between items-center pb-3 border-b border-slate-200 dark:border-slate-700">
+                        <button onclick="regStep = 1; state.registration = { name: '', age: '', gender: '', mobile: '', dept: '' }; router.navigate('register');" class="text-xs font-bold text-primary dark:text-blue-400 hover:underline flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                            <span>${t.newSlipBtn}</span>
+                        </button>
+                        <button onclick="resetCurrentSlip()" class="text-xs font-bold text-red-600 hover:underline flex items-center space-x-1">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                            <span>${t.resetSlipBtn}</span>
+                        </button>
+                    </div>
+
+                    <div class="text-center pb-2">
+                        <h2 class="text-xs uppercase tracking-wider text-primary dark:text-blue-400 font-bold">SEVA PATH OPD & Diagnostic Slip</h2>
+                        <div class="text-4xl font-black text-slate-900 dark:text-white my-2">${slip.token}</div>
+                        <div class="text-sm font-semibold text-slate-600 dark:text-slate-300">${slip.name}</div>
+                    </div>
+
+                    <div class="py-2 space-y-3 text-sm">
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Service / Dept:</span><span class="font-bold dark:text-white">${slip.department}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Room & Floor:</span><span class="font-bold text-primary dark:text-blue-400">${slip.room}, ${slip.floor}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">Staff / Doctor:</span><span class="font-bold dark:text-white">${slip.doctor}</span></div>
+                        <div class="flex justify-between"><span class="text-slate-500 dark:text-slate-400">${t.waitEstimate}:</span><span class="font-bold text-amber-600 dark:text-amber-400">~${estWait} mins (${q.waiting} ${t.peopleAhead})</span></div>
+                    </div>
+
+                    <!-- Button to Open Full Navigation Map -->
+                    <button onclick="router.navigate('find')" class="min-touch w-full bg-blue-50 dark:bg-slate-900 border-2 border-primary text-primary dark:text-blue-400 p-3 rounded-xl font-bold flex items-center justify-center space-x-2 transition">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"></path></svg>
+                        <span>${t.openMapBtn}</span>
+                    </button>
+
+                    <div class="grid grid-cols-2 gap-3 pt-2">
+                        <button onclick="shareOPDSlip()" class="min-touch bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-bold text-center flex items-center justify-center space-x-1 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+                            <span>${t.shareSlip}</span>
+                        </button>
+                        <button onclick="router.navigate('myturn')" class="min-touch bg-primary hover:bg-blue-700 text-white p-3 rounded-xl font-bold text-center transition">Track Queue</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetCurrentSlip() {
+            state.currentSlip = null;
+            saveState();
+            router.navigate('home');
+        }
+
+        function shareOPDSlip() {
+            const t = i18n[state.lang] || i18n.en;
+            const slip = state.currentSlip || { token: 'MED-042', name: 'Kamla Devi', department: 'General Medicine', room: 'Room 1 & 2', floor: 'First Floor' };
+            const textToShare = `SEVA PATH OPD Slip\nToken: ${slip.token}\nPatient: ${slip.name}\nDepartment: ${slip.department}\nLocation: ${slip.room}, ${slip.floor}\nHospital: City District Hospital`;
+
+            if (navigator.share) {
+                navigator.share({
+                    title: 'SEVA PATH OPD Slip',
+                    text: textToShare
+                }).catch(() => {});
+            } else {
+                navigator.clipboard.writeText(textToShare);
+                alert(t.copiedText);
+            }
+        }
+
+        // --- My Turn View ---
+        function renderMyTurn() {
+            const t = i18n[state.lang] || i18n.en;
+            const slip = state.currentSlip || { token: 'MED-042', department: 'General Medicine', room: 'Room 1 & 2', floor: 'First Floor', doctor: 'Dr. A. Sharma' };
+            const q = state.queues[slip.department] || { current: 'MED-040', waiting: 4, avgTime: 5, status: 'available' };
+            const estWait = q.waiting * q.avgTime;
+
+            return `
+                <div class="max-w-md mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2 text-center">
+                    <h2 class="text-lg font-bold text-slate-600 dark:text-slate-300">Live Queue Tracking</h2>
+                    <div class="text-4xl font-black text-primary dark:text-blue-400 my-2">${slip.token}</div>
+                    
+                    <div class="bg-blue-50 dark:bg-slate-900 p-4 rounded-xl my-4">
+                        <div class="text-xs text-slate-500 dark:text-slate-400 uppercase font-bold">Now Serving</div>
+                        <div class="text-3xl font-black text-slate-800 dark:text-white">${q.current}</div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 my-4">
+                        <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl">
+                            <div class="text-xs text-slate-500 dark:text-slate-400">${t.peopleAhead}</div>
+                            <div class="text-2xl font-bold text-slate-800 dark:text-white">${q.waiting}</div>
+                        </div>
+                        <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl">
+                            <div class="text-xs text-slate-500 dark:text-slate-400">${t.waitEstimate}</div>
+                            <div class="text-2xl font-bold text-amber-600 dark:text-amber-400">~${estWait}m</div>
+                        </div>
+                    </div>
+
+                    <div class="text-sm font-medium text-slate-600 dark:text-slate-300 mb-6">
+                        Status: <span class="font-bold text-green-600 dark:text-green-400">${q.status === 'available' ? 'Available & Serving' : 'On Short Break'}</span>
+                    </div>
+
+                    <button onclick="router.navigate('find')" class="min-touch w-full bg-primary hover:bg-blue-700 text-white p-4 rounded-xl font-bold shadow transition">
+                        Navigate to ${slip.room} (${slip.floor})
+                    </button>
+                </div>
+            `;
+        }
+
+        // --- Find Slip View ---
+        function renderFindSlip() {
+            return `
+                <div class="max-w-md mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2">
+                    <h2 class="text-xl font-bold mb-4 dark:text-white">Enter OPD Slip Token</h2>
+                    <input type="text" id="token-input" class="w-full p-4 border-2 rounded-xl text-lg mb-4 uppercase dark:bg-slate-900 dark:border-slate-700 dark:text-white focus:border-primary outline-none" placeholder="e.g. MED-042, XRAY-019" />
+                    <button onclick="lookupToken()" class="min-touch w-full bg-primary hover:bg-blue-700 text-white p-4 rounded-xl font-bold transition">Track My Turn & Directions</button>
+                </div>
+            `;
+        }
+
+        function lookupToken() {
+            const val = document.getElementById('token-input').value.trim();
+            if (val) {
+                router.navigate('myturn');
+            }
+        }
+
+        // --- Room Navigation Map View ---
+        function renderFindPlace() {
+            const t = i18n[state.lang] || i18n.en;
+            return `
+                <div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold dark:text-white">SEVA PATH Room & Ward Map</h2>
+                        <button onclick="router.navigate('diagnostics')" class="text-xs font-bold text-primary dark:text-blue-400 underline">View X-Ray & Labs ➔</button>
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="text" id="place-search" class="w-full p-3 border rounded-xl dark:bg-slate-900 dark:border-slate-700 dark:text-white focus:border-primary outline-none" placeholder="Search OPD room 1, ward 4, help desk..." />
+                    </div>
+
+                    <!-- Interactive SVG Floor Plan -->
+                    <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl border border-slate-300 dark:border-slate-700 relative overflow-hidden h-72 flex items-center justify-center">
+                        <svg class="w-full h-full" viewBox="0 0 400 400">
+                            <rect x="15" y="15" width="370" height="370" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                            <text x="25" y="35" class="text-xs fill-slate-500 font-bold">First Floor - OPD Consulting Rooms</text>
+                            
+                            <circle cx="50" cy="350" r="8" fill="#2563eb" />
+                            <text x="65" y="354" class="text-[10px] fill-slate-700 dark:fill-slate-300 font-bold">Lift / Stairs</text>
+
+                            <circle cx="120" cy="200" r="10" fill="#16a34a" />
+                            <text x="135" y="204" class="text-[11px] fill-green-600 font-bold">Room 1 & 2 (Gen Med)</text>
+
+                            <circle cx="220" cy="200" r="10" fill="#2563eb" />
+                            <text x="235" y="204" class="text-[11px] fill-blue-600 font-bold">Room 3 (Children)</text>
+
+                            <circle cx="320" cy="200" r="10" fill="#9333ea" />
+                            <text x="260" y="170" class="text-[11px] fill-purple-600 font-bold">Room 4 (Women)</text>
+
+                            <path d="M 50 350 L 50 200 L 320 200" fill="none" stroke="#2563eb" stroke-width="3" stroke-dasharray="5,5"/>
+                        </svg>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-blue-50 dark:bg-slate-900 rounded-xl">
+                        <div class="font-bold text-primary dark:text-blue-400 mb-1">${t.directionsTitle}</div>
+                        <p class="text-sm text-slate-700 dark:text-slate-300">1. Take Lift to First Floor. <br>2. Turn right past waiting hall A. <br>3. Rooms 1 to 8 are lined along the main corridor.</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-4">
+                        <button onclick="speakText('Take lift to first floor, turn right, consulting rooms are along the main corridor')" class="min-touch bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white p-3 rounded-xl font-bold transition">${t.readAloud}</button>
+                        <button onclick="router.navigate('emergency')" class="min-touch bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-bold transition">${t.imLost}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- X-Ray & Diagnostics Navigation View ---
+        function renderDiagnosticsView() {
+            const t = i18n[state.lang] || i18n.en;
+            return `
+                <div class="max-w-2xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="text-xl font-bold dark:text-white">X-Ray, MRI, CT Scan & Lab Finder</h2>
+                        <button onclick="router.navigate('find')" class="text-xs font-bold text-primary dark:text-blue-400 underline">View OPD Rooms ➔</button>
+                    </div>
+
+                    <div class="mb-4">
+                        <input type="text" id="diag-search" class="w-full p-3 border rounded-xl dark:bg-slate-900 dark:border-slate-700 dark:text-white focus:border-primary outline-none" placeholder="${t.searchPlaceHolder}" />
+                    </div>
+
+                    <!-- Interactive Diagnostic Map Blueprint -->
+                    <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl border border-slate-300 dark:border-slate-700 relative overflow-hidden h-72 flex items-center justify-center">
+                        <svg class="w-full h-full" viewBox="0 0 400 400">
+                            <rect x="15" y="15" width="370" height="370" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4"/>
+                            <text x="25" y="35" class="text-xs fill-slate-500 font-bold">Ground Floor - Radiology & Diagnostic Wing</text>
+                            
+                            <circle cx="50" cy="350" r="8" fill="#2563eb" />
+                            <text x="65" y="354" class="text-[10px] fill-slate-700 dark:fill-slate-300 font-bold">Entrance</text>
+
+                            <circle cx="150" cy="150" r="10" fill="#0284c7" />
+                            <text x="165" y="154" class="text-[11px] fill-sky-600 font-bold">X-Ray (Rm 101)</text>
+
+                            <circle cx="280" cy="150" r="10" fill="#0d9488" />
+                            <text x="210" y="135" class="text-[11px] fill-teal-600 font-bold">MRI Scan (Rm 102)</text>
+
+                            <circle cx="350" cy="220" r="10" fill="#d97706" />
+                            <text x="280" y="225" class="text-[11px] fill-amber-600 font-bold">CT Scan (Rm 103)</text>
+
+                            <circle cx="150" cy="280" r="10" fill="#16a34a" />
+                            <text x="165" y="284" class="text-[11px] fill-green-600 font-bold">Blood Test / Lab</text>
+
+                            <path d="M 50 350 L 150 280 L 150 150 L 280 150 L 350 220" fill="none" stroke="#0284c7" stroke-width="3" stroke-dasharray="5,5"/>
+                        </svg>
+                    </div>
+
+                    <div class="mt-4 p-4 bg-sky-50 dark:bg-slate-900 rounded-xl">
+                        <div class="font-bold text-sky-700 dark:text-sky-400 mb-1">${t.directionsTitle}</div>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">${t.navDirectionsText}</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mt-4">
+                        <button onclick="speakText('${t.navDirectionsText.replace(/\n/g, ' ')}')" class="min-touch bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white p-3 rounded-xl font-bold transition">${t.readAloud}</button>
+                        <button onclick="router.navigate('emergency')" class="min-touch bg-red-600 hover:bg-red-700 text-white p-3 rounded-xl font-bold transition">${t.imLost}</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Emergency View ---
+        function renderEmergency() {
+            return `
+                <div class="max-w-md mx-auto bg-red-50 dark:bg-slate-900 p-6 rounded-2xl shadow-xl border-2 border-red-600 mt-2">
+                    <div class="text-center">
+                        <svg class="w-16 h-16 text-red-600 mx-auto mb-2 animate-pulse-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                        <h2 class="text-2xl font-black text-red-600 mb-1">EMERGENCY / CASUALTY</h2>
+                        <p class="text-xs text-slate-600 dark:text-slate-300 mb-4">Go directly to the Emergency Department on Ground Floor (North Wing)</p>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow mb-4">
+                        <div class="font-bold text-sm text-red-600 mb-2">Immediate Care Signs:</div>
+                        <ul class="text-xs space-y-1 text-slate-700 dark:text-slate-300 list-disc list-inside">
+                            <li>Chest pain or severe breathing trouble</li>
+                            <li>Heavy bleeding or serious injury</li>
+                            <li>Fainting, unconsciousness, or drooping face</li>
+                            <li>Severe pain in pregnancy</li>
+                        </ul>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3 mb-4">
+                        <a href="tel:112" class="min-touch bg-red-600 hover:bg-red-700 text-white p-4 rounded-xl font-bold text-center flex items-center justify-center space-x-2 transition">
+                            <span>Call 112</span>
+                        </a>
+                        <a href="tel:108" class="min-touch bg-red-700 hover:bg-red-800 text-white p-4 rounded-xl font-bold text-center flex items-center justify-center space-x-2 transition">
+                            <span>Ambulance 108</span>
+                        </a>
+                    </div>
+
+                    <button onclick="raiseUrgentFlag()" class="min-touch w-full bg-slate-800 dark:bg-slate-700 text-white p-4 rounded-xl font-bold shadow transition">
+                        Raise Urgent Help Flag at Staff Desk
+                    </button>
+                </div>
+            `;
+        }
+
+        function raiseUrgentFlag() {
+            state.urgentFlags.push({ id: Date.now(), token: state.currentSlip ? state.currentSlip.token : 'WALK-IN', time: new Date().toLocaleTimeString() });
+            saveState();
+            alert("Urgent flag raised! Staff dashboard alerted immediately.");
+        }
+
+        // --- Settings View ---
+        function renderSettings() {
+            return `
+                <div class="max-w-md mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2 space-y-6">
+                    <h2 class="text-2xl font-bold dark:text-white">App Settings</h2>
+
+                    <!-- Appearance Theme Switcher -->
+                    <div class="flex justify-between items-center py-2 border-b dark:border-slate-700">
+                        <span class="font-bold dark:text-white">Theme Mode</span>
+                        <div class="flex space-x-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border dark:border-slate-700">
+                            <button 
+                                onclick="setTheme('light')" 
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1 ${state.theme === 'light' ? 'bg-white text-primary shadow' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'}">
+                                <span>☀️ Light</span>
+                            </button>
+                            <button 
+                                onclick="setTheme('dark')" 
+                                class="px-3 py-1.5 rounded-lg text-xs font-bold transition flex items-center space-x-1 ${state.theme === 'dark' ? 'bg-primary text-white shadow' : 'text-slate-500 hover:text-slate-900 dark:text-slate-400'}">
+                                <span>🌙 Dark</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Language Switcher -->
+                    <div class="flex justify-between items-center py-2 border-b dark:border-slate-700">
+                        <span class="font-bold dark:text-white">Language</span>
+                        <select onchange="setLang(this.value)" class="p-2 border rounded-xl dark:bg-slate-900 dark:border-slate-700 dark:text-white font-bold outline-none">
+                            <option value="en" ${state.lang==='en'?'selected':''}>English</option>
+                            <option value="hi" ${state.lang==='hi'?'selected':''}>हिंदी</option>
+                            <option value="ta" ${state.lang==='ta'?'selected':''}>தமிழ்</option>
+                        </select>
+                    </div>
+
+                    <!-- High Contrast Mode -->
+                    <div class="flex justify-between items-center py-2 border-b dark:border-slate-700">
+                        <span class="font-bold dark:text-white">High Contrast Mode</span>
+                        <input type="checkbox" ${state.highContrast?'checked':''} onchange="state.highContrast=!state.highContrast; saveState(); router.render();" class="w-6 h-6 text-primary rounded"/>
+                    </div>
+
+                    <!-- Assisted Voice Mode -->
+                    <div class="flex justify-between items-center py-2">
+                        <span class="font-bold dark:text-white">Assisted Voice Mode</span>
+                        <input type="checkbox" ${state.assistedMode?'checked':''} onchange="toggleAssistedMode()" class="w-6 h-6 text-primary rounded"/>
+                    </div>
+                </div>
+            `;
+        }
+
+        function setTheme(t) {
+            state.theme = t;
+            saveState();
+            router.render();
+        }
+
+        // --- Staff Dashboard ---
+        function renderStaffDashboard() {
+            return `
+                <div class="max-w-4xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold dark:text-white">Staff Queue Dashboard</h2>
+                        <button onclick="addSamplePatients()" class="px-4 py-2 bg-primary hover:bg-blue-700 text-white rounded-xl font-bold text-xs transition">Add Sample Patients</button>
+                    </div>
+
+                    ${state.urgentFlags.length > 0 ? `
+                        <div class="bg-red-100 dark:bg-red-950 border-2 border-red-600 p-4 rounded-xl mb-6">
+                            <div class="font-bold text-red-600 text-lg mb-2 flex items-center space-x-2">
+                                <svg class="w-6 h-6 animate-pulse-glow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                <span>Urgent Cases Flagged (${state.urgentFlags.length})</span>
+                            </div>
+                            <div class="space-y-2">
+                                ${state.urgentFlags.map(f => `
+                                    <div class="flex justify-between items-center bg-white dark:bg-slate-900 p-3 rounded-lg">
+                                        <span class="font-bold text-red-600">Token: ${f.token} (Raised at ${f.time})</span>
+                                        <button onclick="resolveUrgentFlag(${f.id})" class="px-3 py-1 bg-red-600 text-white rounded font-bold text-xs">Mark Seen</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        ${Object.keys(state.queues).map(dept => {
+                            const q = state.queues[dept];
+                            return `
+                                <div class="p-4 border dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900">
+                                    <div class="flex justify-between items-center mb-2">
+                                        <div class="font-bold text-primary dark:text-blue-400">${dept}</div>
+                                        <span class="px-2 py-1 text-xs rounded font-bold ${q.waiting > 4 ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}">${q.waiting} waiting</span>
+                                    </div>
+                                    <div class="text-sm mb-3 dark:text-slate-300">Now Serving: <span class="font-black text-lg dark:text-white">${q.current}</span></div>
+                                    <div class="flex space-x-2">
+                                        <button onclick="callNextQueue('${dept}')" class="min-touch flex-1 bg-primary hover:bg-blue-700 text-white py-2 rounded-lg font-bold text-sm transition">Call Next</button>
+                                        <button onclick="noShowQueue('${dept}')" class="min-touch bg-slate-200 dark:bg-slate-700 dark:text-white px-3 py-2 rounded-lg font-bold text-sm transition">No Show</button>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function callNextQueue(dept) {
+            const q = state.queues[dept];
+            const parts = q.current.split('-');
+            const prefix = parts[0];
+            const num = parseInt(parts[1] || '40') + 1;
+            q.current = prefix + '-' + String(num).padStart(3, '0');
+            if (q.waiting > 0) q.waiting--;
+            saveState();
+            router.render();
+        }
+
+        function noShowQueue(dept) {
+            const q = state.queues[dept];
+            if (q.waiting > 0) q.waiting--;
+            saveState();
+            router.render();
+        }
+
+        function resolveUrgentFlag(id) {
+            state.urgentFlags = state.urgentFlags.filter(f => f.id !== id);
+            saveState();
+            router.render();
+        }
+
+        function addSamplePatients() {
+            Object.keys(state.queues).forEach(d => {
+                state.queues[d].waiting += Math.floor(Math.random() * 4) + 1;
+            });
+            saveState();
+            router.render();
+        }
+
+        // --- Waiting Room Board ---
+        function renderBoard() {
+            return `
+                <div class="max-w-5xl mx-auto bg-slate-900 text-white p-8 rounded-2xl shadow-2xl mt-2 border border-slate-800">
+                    <div class="text-center pb-6 border-b border-slate-800 mb-6">
+                        <h2 class="text-3xl font-black text-primary dark:text-blue-400">SEVA PATH - LIVE QUEUE BOARD</h2>
+                        <p class="text-sm text-slate-400">City District Hospital | OPD & Diagnostic Hall</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        ${Object.keys(state.queues).map(dept => {
+                            const q = state.queues[dept];
+                            return `
+                                <div class="bg-slate-800 p-6 rounded-xl border border-slate-700 flex justify-between items-center">
+                                    <div>
+                                        <div class="text-sm text-blue-400 font-bold">${dept}</div>
+                                        <div class="text-xs text-slate-400">Ground / First Floor</div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-4xl font-black text-green-400">${q.current}</div>
+                                        <div class="text-xs text-slate-400">${q.waiting} waiting</div>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- Admin Portal ---
+        function renderAdminPortal() {
+            return `
+                <div class="max-w-3xl mx-auto bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700 mt-2">
+                    <h2 class="text-2xl font-bold mb-2 dark:text-white">Admin Portal</h2>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 mb-6">Manage hospital departments, diagnostic labs, and configuration settings.</p>
+
+                    <div class="space-y-4">
+                        <div class="p-4 border dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900">
+                            <h3 class="font-bold text-primary dark:text-blue-400 mb-2">Departments & Diagnostics</h3>
+                            <div class="space-y-2">
+                                ${state.departments.map((d, i) => `
+                                    <div class="flex justify-between items-center bg-white dark:bg-slate-800 p-3 rounded-lg border dark:border-slate-700 text-sm">
+                                        <div class="dark:text-white"><strong>${d.name}</strong> - ${d.doctor} (${d.room})</div>
+                                        <button onclick="editDept(${i})" class="px-3 py-1 bg-slate-200 dark:bg-slate-700 dark:text-white rounded font-bold text-xs transition">Edit</button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <div class="p-4 border dark:border-slate-700 rounded-xl bg-slate-50 dark:bg-slate-900">
+                            <h3 class="font-bold text-primary dark:text-blue-400 mb-2">System Controls</h3>
+                            <button onclick="resetSystemData()" class="min-touch px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm transition">Reset All Data</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function resetSystemData() {
+            if (confirm("Reset all queue and patient data?")) {
+                localStorage.removeItem('sevapath_state');
+                state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                router.render();
+            }
+        }
+
+        function editDept(index) {
+            const newDoc = prompt("Enter new doctor/staff name:", state.departments[index].doctor);
+            if (newDoc) {
+                state.departments[index].doctor = newDoc;
+                saveState();
+                router.render();
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            router.render();
+        });
+    </script>
+</body>
+</html>
